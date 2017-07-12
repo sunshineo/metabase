@@ -381,12 +381,35 @@
 
 ;;; ------------------------------------------------------------ POST /api/database/:id/sync ------------------------------------------------------------
 
+
 ;; TODO - Shouldn't we just check for superuser status instead of write checking?
+;; NOTE Atte: This becomes maybe obsolete
 (api/defendpoint POST "/:id/sync"
   "Update the metadata for this `Database`."
   [id]
   ;; just publish a message and let someone else deal with the logistics
   (events/publish-event! :database-trigger-sync (api/write-check Database id))
+  {:status :ok})
+
+;; NOTE Atte Keinänen: If you think that these endpoints could have more descriptive names, please change them.
+;; Currently these match the titles of the admin UI buttons that call these endpoints
+
+;; Should somehow trigger sync-database/sync-database!
+(api/defendpoint POST "/:id/sync_schema"
+  "Trigger a manual update of the schema metadata for this `Database`."
+  [id]
+  {:status :ok})
+
+;; Should somehow trigger cached-values/cache-field-values-for-database!
+(api/defendpoint POST "/:id/rescan_values"
+  "Trigger a manual scan of the field values for this `Database`."
+  [id]
+  {:status :ok})
+
+;; "Discard saved field values" action in db UI
+(api/defendpoint POST "/:id/discard_values"
+  "Discards all saved field values for this `Database`."
+  [id]
   {:status :ok})
 
 
